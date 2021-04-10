@@ -14,7 +14,11 @@
     <h2>Criação de Filmes</h2>
     <input type="number" name="id" id="id" placeholder="Número Identificador" class="form-control mb-2">
     <input type="text" name="title" id="title" placeholder="Título" class="form-control mb-2">
-    <button type="button" onclick="createMovie()" class="btn btn-success">Criar</button>
+    <button type="button" onclick="createMovie()" class="btn btn-success mb-3">Criar</button>
+    <h2>Edição de Filmes</h2>
+    <input type="number" name="idEdit" id="idEdit" placeholder="Número Identificador" class="form-control mb-2">
+    <input type="text" name="titleEdit" id="titleEdit" placeholder="Título" class="form-control mb-2">
+    <button type="button" onclick="editMovie()" class="btn btn-warning">Editar</button>
   </div>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
@@ -43,10 +47,21 @@
         deleteBtn.classList.add('mb-2');
         deleteBtn.innerHTML = 'Deletar';
         deleteBtn.addEventListener('click', function() {
-          deleteMovie(item)
+          deleteMovie(item);
+        });
+        item.appendChild(deleteBtn);
+
+        // Adicionando botão para edição 
+        var editBtn = document.createElement('button');
+        editBtn.classList.add('btn');
+        editBtn.classList.add('btn-warning');
+        editBtn.classList.add('mb-2');
+        editBtn.innerHTML = 'Editar';
+        editBtn.addEventListener('click', function() {
+          loadForm(item);
         });
 
-        item.appendChild(deleteBtn);
+        item.appendChild(editBtn);
         
         // Adiciona os items de li dentro do ul
         list.appendChild(item);
@@ -78,6 +93,34 @@
       var id = listItem.getAttribute('data-id');
       axios.delete('http://localhost:5550/movie/' + id).then((response) => {
         alert('Filme deletado');
+      }).catch((error) => {
+        alert(error);
+      });
+    }
+
+    function loadForm(listItem) {
+      var id = listItem.getAttribute('data-id');
+      var title = listItem.getAttribute('data-title');
+      document.getElementById('idEdit').value = id;
+      document.getElementById('titleEdit').value = title;
+    }
+
+    function editMovie(listItem) {
+      var idInput = document.getElementById('idEdit');
+      var titleInput = document.getElementById('titleEdit');
+
+      var movie = {
+        id: idInput.value,
+        title: titleInput.value
+      }
+
+      var id = idInput.value;
+
+      // Enviando os dados através do axios
+      axios.put('http://localhost:5550/movie/' + id, movie).then((response) => {
+        if(response.status == 200) {
+          alert('Filme atualizado');
+        }
       }).catch((error) => {
         alert(error);
       });
