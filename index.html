@@ -29,8 +29,25 @@
       movies.forEach((movie) => {
         // Cria um elemento li e o atribui a item
         var item = document.createElement('li');
+        // Adicionando atributos customizáveis
+        item.setAttribute('data-id', movie.id);
+        item.setAttribute('data-title', movie.title);
+        
         // Conteúdo de dentro do item
-        item.innerHTML = movie.id + ' - ' + movie.title;
+        item.innerHTML = movie.id + ' - ' + movie.title + ' ';
+
+        // Adicionando botão para deleção
+        var deleteBtn = document.createElement('button');
+        deleteBtn.classList.add('btn');
+        deleteBtn.classList.add('btn-danger');
+        deleteBtn.classList.add('mb-2');
+        deleteBtn.innerHTML = 'Deletar';
+        deleteBtn.addEventListener('click', function() {
+          deleteMovie(item)
+        });
+
+        item.appendChild(deleteBtn);
+        
         // Adiciona os items de li dentro do ul
         list.appendChild(item);
       });
@@ -52,6 +69,15 @@
         if(response.status == 200) {
           alert('Filme cadastrado');
         }
+      }).catch((error) => {
+        alert(error);
+      });
+    }
+
+    function deleteMovie(listItem) {
+      var id = listItem.getAttribute('data-id');
+      axios.delete('http://localhost:5550/movie/' + id).then((response) => {
+        alert('Filme deletado');
       }).catch((error) => {
         alert(error);
       });
