@@ -7,12 +7,26 @@
   <title>Consumindo API de Filmes</title>
 </head>
 <body>
-  
+  <h2>Lista de Filmes</h2>
+  <ul id="movies">
+
+  </ul>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
     // Utilizando o axios para realizar promises para uma api externa, requer configuração do cors
     axios.get('http://localhost:5550/movies').then((response) => {
-      console.log(response);
+      var movies = response.data;
+      // Pega o elemento ul
+      var list = document.getElementById('movies');
+      // Para cada filme
+      movies.forEach((movie) => {
+        // Cria um elemento li e o atribui a item
+        var item = document.createElement('li');
+        // Conteúdo de dentro do item
+        item.innerHTML = movie.id + ' - ' + movie.title;
+        // Adiciona os items de li dentro do ul
+        list.appendChild(item);
+      });
     }).catch((error) => {
       console.log(error);
     });
