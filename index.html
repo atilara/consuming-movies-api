@@ -12,7 +12,7 @@
     
     <h2>Login</h2>
     <input type="text" name="email" id="email" placeholder="E-mail" class="form-control mb-2">
-    <input type="text" name="password" id="password" placeholder="Senha" class="form-control mb-2">
+    <input type="password" name="password" id="password" placeholder="Senha" class="form-control mb-2">
     <button type="button" onclick="login()" class="btn btn-primary mb-3">Logar</button>
     
     <h2>Lista de Filmes</h2>
@@ -33,19 +33,25 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
     
+    var axiosConfig = {
+      headers: {
+        authorization: 'Bearer ' + localStorage.getItem('token'),
+      },
+    }
+    
     function login() {
       var emailField = document.getElementById('email');
       var passwordField = document.getElementById('password');
 
       var email = emailField.value;
       var password = passwordField.value;
-      console.log(email);
-      console.log(password);
 
       // Passando os dados no body
       axios.post('http://localhost:5550/authenticate', { email, password })
         .then((response) => {
-          alert('Logado');
+          var token = response.data.token;
+          localStorage.setItem('token', token);
+          axiosConfig.headers.authorization = 'Bearer ' + localStorage.getItem('token');
         })
         .catch((error) => {
           alert('Login incorreto');
@@ -108,7 +114,7 @@
       }
 
       // Enviando os dados através do axios
-      axios.post('http://localhost:5550/movie', movie).then((response) => {
+      axios.post('http://localhost:5550/movie', movie, axiosConfig).then((response) => {
         if(response.status == 200) {
           alert('Filme cadastrado');
         }
@@ -119,7 +125,7 @@
 
     function deleteMovie(listItem) {
       var id = listItem.getAttribute('data-id');
-      axios.delete('http://localhost:5550/movie/' + id).then((response) => {
+      axios.delete('http://localhost:5550/movie/' + id, axiosConfig).then((response) => {
         alert('Filme deletado');
       }).catch((error) => {
         alert(error);
@@ -145,7 +151,7 @@
       var id = idInput.value;
 
       // Enviando os dados através do axios
-      axios.put('http://localhost:5550/movie/' + id, movie).then((response) => {
+      axios.put('http://localhost:5550/movie/' + id, movie, axiosConfig).then((response) => {
         if(response.status == 200) {
           alert('Filme atualizado');
         }
